@@ -39,7 +39,7 @@ services:
 
   ################################################################################
 
-  cdp-node-backend-template:
+  service-insights-data:
     build:
       context: .
       target: development
