@@ -101,8 +101,9 @@ async function main() {
   try {
     console.log(`Seeding ${databaseName}`)
     const report = await seedDatabase(client.db(databaseName))
-    for (const [name, count] of Object.entries(report))
+    for (const [name, count] of Object.entries(report)) {
       console.log(`  ${name.padEnd(20)} ${count}`)
+    }
     console.log('Seed complete.')
   } finally {
     await client.close()
