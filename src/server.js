@@ -4,6 +4,7 @@ import { secureContext } from '@defra/hapi-secure-context'
 
 import { config } from '#/config.js'
 import { router } from '#/plugins/router.js'
+import { frontend } from '#/plugins/frontend.js'
 import { requestLogger } from '#/plugins/request-logger.js'
 import { mongoDb } from '#/plugins/mongodb.js'
 import { failAction } from '#/common/helpers/fail-action.js'
@@ -55,7 +56,8 @@ export async function createServer() {
       plugin: mongoDb,
       options: config.get('mongo')
     },
-    router
+    router,
+    frontend
   ])
 
   return server

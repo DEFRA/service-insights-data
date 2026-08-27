@@ -1,0 +1,101 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = s.name %}
+{% set activeNav = "services" %}
+
+{% block backLink %}
+  {{ govukBackLink({ text: "All services", href: "/" }) }}
+{% endblock %}
+
+{% macro bulletList(items) %}
+  <ul class="govuk-list govuk-list--bullet">
+    {% for item in items %}<li>{{ item }}</li>{% endfor %}
+  </ul>
+{% endmacro %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-l">{{ s.deliveryGroup.name }}</span>
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
+        {{ s.name }}
+        {% if s.status.name %}{{ govukTag({ text: s.status.name, classes: s.statusTagClass }) }}{% endif %}
+      </h1>
+
+      {% if not s.userFacingName %}
+        <p class="govuk-hint">No public-facing name set — showing the internal name.</p>
+      {% endif %}
+      {% if s.description %}<p class="govuk-body-l">{{ s.description }}</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ govukSummaryList({ rows: summaryRows }) }}
+
+      {% if s.enables.length %}
+        <h2 class="govuk-heading-m">What it enables</h2>
+        {{ bulletList(s.enables) }}
+      {% endif %}
+
+      {% if s.dataDependencies.length %}
+        <h2 class="govuk-heading-m">Data dependencies</h2>
+        {{ bulletList(s.dataDependencies) }}
+      {% endif %}
+
+      {% if userNeeds.length %}
+        <h2 class="govuk-heading-m">User needs</h2>
+        {{ bulletList(userNeeds) }}
+      {% endif %}
+
+      {% if outcomes.length %}
+        <h2 class="govuk-heading-m">Defra outcomes</h2>
+        {{ bulletList(outcomes) }}
+      {% endif %}
+
+      {% if userGroups.length %}
+        <h2 class="govuk-heading-m">User groups</h2>
+        {{ bulletList(userGroups) }}
+      {% endif %}
+
+      {% if related.length %}
+        <h2 class="govuk-heading-m">Related services</h2>
+        <ul class="govuk-list govuk-list--bullet">
+          {% for r in related %}
+            <li>
+              {% if r.slug %}<a class="govuk-link" href="/service/{{ r.slug }}">{{ r.name }}</a>{% else %}{{ r.name }}{% endif %}
+              <span class="govuk-hint govuk-!-display-inline"> — {{ r.type }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if s.techOverviewHtml %}
+        <h2 class="govuk-heading-m">Technology overview</h2>
+        <div class="app-rich-text">{{ s.techOverviewHtml | safe }}</div>
+      {% endif %}
+
+      {% if s.legislationHtml %}
+        <h2 class="govuk-heading-m">Legislation</h2>
+        <div class="app-rich-text">{{ s.legislationHtml | safe }}</div>
+      {% endif %}
+
+      {% if s.notesHtml %}
+        <h2 class="govuk-heading-m">Notes</h2>
+        <div class="app-rich-text">{{ s.notesHtml | safe }}</div>
+      {% endif %}
+
+      {% if webEntries.length %}
+        <h2 class="govuk-heading-m">Web register entries ({{ webEntries.length }})</h2>
+        <ul class="govuk-list govuk-list--bullet">
+          {% for w in webEntries %}
+            <li><a class="govuk-link" href="/web-register/{{ w.id }}">{{ w.summary }}</a>{% if w.status %} <span class="govuk-hint govuk-!-display-inline">{{ w.status }}</span>{% endif %}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = e.name %}
+{% set activeNav = "web-register" %}
+
+{% block backLink %}
+  {{ govukBackLink({ text: "Web register", href: "/web-register" }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span class="govuk-caption-l">Web register entry</span>
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">{{ e.name }}</h1>
+      {% if e.descriptionHtml %}<div class="app-rich-text">{{ e.descriptionHtml | safe }}</div>{% endif %}
+
+      {{ govukSummaryList({ rows: detailRows }) }}
+
+      {% if a11yRows.length %}
+        <h2 class="govuk-heading-m">Accessibility</h2>
+        {{ govukSummaryList({ rows: a11yRows }) }}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

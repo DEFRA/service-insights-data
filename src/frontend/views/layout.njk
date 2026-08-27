@@ -1,0 +1,62 @@
+{% extends "govuk/template.njk" %}
+{% from "govuk/components/generic-header/macro.njk" import govukGenericHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{% from "defra/components/footer/macro.njk" import defraFooter %}
+
+{# App-wide chrome: GOV.UK template restyled by @defra/frontend (settings-layer
+   over govuk-frontend, "defra" brand mode — system fonts, Defra tokens), the
+   Defra footer, and the govuk-frontend JS initialised at the end of the body. #}
+
+{% block pageTitle %}{{ pageTitle }} – Defra Service Directory{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="/defra-frontend.css?v={{ assetVersion }}">
+  <link rel="stylesheet" href="/app.css?v={{ assetVersion }}">
+{% endblock %}
+
+{# Not the GOV.UK crown header — this is an internal Defra tool. Use the
+   upstream generic header restyled green by Defra tokens (per the Defra kit:
+   "govukGenericHeader with the Defra wordmark, token-only restyle"), with the
+   service name as the wordmark. The service navigation sits below it. #}
+{% block govukHeader %}
+  {{ govukGenericHeader({ logoText: "Service Directory", url: "/" }) }}
+{% endblock %}
+
+{% block govukServiceNavigation %}
+  {{ govukServiceNavigation({
+    navigation: [
+      { href: "/", text: "Services", active: activeNav == "services" },
+      { href: "/web-register", text: "Web register", active: activeNav == "web-register" }
+    ]
+  }) }}
+{% endblock %}
+
+{% block beforeContent %}
+  <div class="govuk-phase-banner">
+    <p class="govuk-phase-banner__content">
+      <strong class="govuk-tag govuk-phase-banner__content__tag">Prototype</strong>
+      <span class="govuk-phase-banner__text">MongoDB service directory — read-only.</span>
+    </p>
+  </div>
+  {% block backLink %}{% endblock %}
+{% endblock %}
+
+{% block content %}{% endblock %}
+
+{% block footer %}
+  {{ defraFooter({
+    items: [
+      { href: "/", text: "Services" },
+      { href: "/web-register", text: "Web register" },
+      { href: "#", text: "Accessibility statement" }
+    ]
+  }) }}
+{% endblock %}
+
+{% block bodyEnd %}
+  <script type="module" src="/govuk/govuk-frontend.min.js"></script>
+  <script type="module">
+    import { initAll } from '/govuk/govuk-frontend.min.js'
+    initAll()
+  </script>
+{% endblock %}
