@@ -25,7 +25,6 @@ MONGO_URI=mongodb://127.0.0.1:27017/ MONGO_DATABASE=service_directory_mongo node
 Frontend routes: `/` (services), `/service/{slug}`, `/web-register`,
 `/web-register/{id}`. Data API routes (`/health`, `/example`) are unchanged.
 
-
 - [Requirements](#requirements)
   - [Node.js](#nodejs)
 - [Local development](#local-development)

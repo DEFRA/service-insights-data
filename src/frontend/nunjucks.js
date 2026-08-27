@@ -8,8 +8,19 @@ import { dirname, join } from 'node:path'
 const here = dirname(fileURLToPath(import.meta.url))
 const repoRoot = join(here, '..', '..')
 
-export const govukDist = join(repoRoot, 'node_modules', 'govuk-frontend', 'dist')
-export const defraSrc = join(repoRoot, 'node_modules', '@defra', 'frontend', 'src')
+export const govukDist = join(
+  repoRoot,
+  'node_modules',
+  'govuk-frontend',
+  'dist'
+)
+export const defraSrc = join(
+  repoRoot,
+  'node_modules',
+  '@defra',
+  'frontend',
+  'src'
+)
 export const publicDir = join(repoRoot, 'public')
 const viewsDir = join(here, 'views')
 

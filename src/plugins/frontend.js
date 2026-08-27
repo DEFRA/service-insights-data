@@ -25,8 +25,16 @@ export const frontend = {
           path: '/assets/{param*}',
           handler: { directory: { path: join(govukDist, 'govuk', 'assets') } }
         },
-        { method: 'GET', path: '/app.css', handler: { file: join(publicDir, 'app.css') } },
-        { method: 'GET', path: '/defra-frontend.css', handler: { file: join(publicDir, 'defra-frontend.css') } }
+        {
+          method: 'GET',
+          path: '/app.css',
+          handler: { file: join(publicDir, 'app.css') }
+        },
+        {
+          method: 'GET',
+          path: '/defra-frontend.css',
+          handler: { file: join(publicDir, 'defra-frontend.css') }
+        }
       ])
 
       server.route(frontendRoutes)
