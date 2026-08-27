@@ -2,6 +2,30 @@
 
 Core delivery platform Node.js Backend Template.
 
+## ⚠️ POC branch: bundled frontend
+
+This branch (`poc/frontend`) adds a **Defra-branded reader UI** to the same Hapi
+service, over the migrated directory data in MongoDB — a proof of concept for
+stakeholders, served alongside the data API.
+
+This is deliberately **not** the production shape. On CDP, frontend and backend
+are separate services; a production build would put this UI in its own service
+from `cdp-node-frontend-template` and call this backend via the platform proxy.
+The UI lives here only to demo end-to-end in one deployable while the data model
+is proven. See `src/frontend/` and `src/plugins/frontend.js`.
+
+Run it (Node 24):
+
+```bash
+npm ci
+npm run css:build                     # compile @defra/frontend SCSS -> public/defra-frontend.css
+MONGO_URI=mongodb://127.0.0.1:27017/ MONGO_DATABASE=service_directory_mongo node .
+```
+
+Frontend routes: `/` (services), `/service/{slug}`, `/web-register`,
+`/web-register/{id}`. Data API routes (`/health`, `/example`) are unchanged.
+
+
 - [Requirements](#requirements)
   - [Node.js](#nodejs)
 - [Local development](#local-development)

@@ -1,0 +1,31 @@
+/* App-specific overrides on top of govuk-frontend. Keep this minimal — prefer
+   real GOV.UK classes and spacing utilities over bespoke CSS. */
+
+/* Let the status tag sit neatly beside the page heading. */
+.govuk-heading-xl .govuk-tag {
+  vertical-align: middle;
+  margin-left: govuk-spacing(2);
+  margin-left: 10px;
+}
+
+/* Inline hints (e.g. "— relationship type") shouldn't force a new line. */
+.govuk-\!-display-inline {
+  display: inline !important;
+}
+
+/* Subtle "showing the internal name" note under a service link in the list —
+   a data-quality signal, not a prominent tag. Secondary text, its own line. */
+.app-internal-flag {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.875rem;
+  color: #505a5f;
+}
+
+/* Free text converted from Jira markup: let long URLs wrap, trim trailing gap. */
+.app-rich-text {
+  overflow-wrap: anywhere;
+}
+.app-rich-text p:last-child {
+  margin-bottom: 0;
+}

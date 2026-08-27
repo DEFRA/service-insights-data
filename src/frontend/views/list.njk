@@ -1,0 +1,56 @@
+{% extends "layout.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% set pageTitle = "Services" %}
+{% set activeNav = "services" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Services</h1>
+      <p class="govuk-body-l govuk-!-margin-bottom-6">
+        {{ shownCount }} of {{ totalCount }} services{% if filtered %} (filtered){% endif %}
+      </p>
+
+      <form method="get" action="/" class="govuk-!-margin-bottom-6">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-half">
+            {{ govukInput({
+              label: { text: "Search", classes: "govuk-label--s" },
+              id: "q", name: "q", type: "search", value: q,
+              spellcheck: false,
+              attributes: { placeholder: "Name or organisation" }
+            }) }}
+          </div>
+          <div class="govuk-grid-column-one-half">
+            {{ govukSelect({
+              label: { text: "Delivery group", classes: "govuk-label--s" },
+              id: "dg", name: "dg", items: dgItems
+            }) }}
+          </div>
+        </div>
+        <div class="govuk-button-group">
+          {{ govukButton({ text: "Filter" }) }}
+          {% if filtered %}<a class="govuk-link" href="/">Clear filters</a>{% endif %}
+        </div>
+      </form>
+
+      {% if rows.length %}
+        {{ govukTable({
+          head: [
+            { text: "Service" },
+            { text: "Delivery group" },
+            { text: "Lead organisation" },
+            { text: "Status" }
+          ],
+          rows: rows
+        }) }}
+      {% else %}
+        <p class="govuk-body">No services match your search.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
