@@ -33,6 +33,13 @@ Frontend routes: `/` (services), `/service/{slug}`, `/web-register`,
 so a deployed environment has data without needing the source database. It is
 idempotent (drops and reloads).
 
+On CDP the service **seeds itself on startup**: if the read-model is empty when
+the app boots, it loads the bundled snapshot (`src/plugins/seed-on-startup.js`).
+This is because the CDP portal terminal is a separate tooling container without
+Node or the seed files, so `npm run seed` can't be run there — the load has to
+happen inside the running service. It only acts on an empty database and never
+overwrites existing data. For production, data would be loaded deliberately.
+
 **Personal data.** The `appUser` collection (staff identities) is never
 included — the UI does not use it. Email addresses have been redacted from the
 snapshot, and the Jira `comments` field stripped. Some free-text descriptions

@@ -5,12 +5,17 @@
 // data — staff identities live in `appUser`, which the UI never touches and
 // this seed never includes.
 //
-// Idempotent: each collection is dropped and reloaded, so re-running yields a
-// clean state. Run with `npm run seed` (reads MONGO_URI / MONGO_DATABASE).
+// Two entry points share `seedDatabase(db)`:
+//   - the CLI (`npm run seed`), which connects and calls it
+//   - the seed-on-startup plugin, which calls it in-process when the DB is empty
+//     (the CDP terminal is a separate container without Node or these files, so
+//     seeding has to happen inside the running service).
+//
+// Idempotent: each collection is dropped and reloaded.
 import { MongoClient } from 'mongodb'
 import { EJSON } from 'bson'
 import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
 
@@ -67,38 +72,50 @@ function readCollection(name) {
     .map((line) => EJSON.parse(line))
 }
 
+/** Load every bundled collection into `db`, dropping and reloading each. */
+export async function seedDatabase(db) {
+  const report = {}
+  for (const name of COLLECTIONS) {
+    const docs = readCollection(name)
+    await db
+      .collection(name)
+      .drop()
+      .catch((err) => {
+        if (err.codeName !== 'NamespaceNotFound') throw err
+      })
+    const collection = db.collection(name)
+    await collection.createIndexes(
+      INDEXES[name].map((i) => ({ key: i.key, ...i.options }))
+    )
+    if (docs.length) await collection.insertMany(docs, { ordered: false })
+    report[name] = await collection.countDocuments()
+  }
+  return report
+}
+
 async function main() {
   const mongoUrl = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/'
   const databaseName = process.env.MONGO_DATABASE || 'service-insights-data'
 
   const client = await MongoClient.connect(mongoUrl)
-  const db = client.db(databaseName)
-  console.log(`Seeding ${databaseName}`)
-
   try {
-    for (const name of COLLECTIONS) {
-      const docs = readCollection(name)
-      await db
-        .collection(name)
-        .drop()
-        .catch((err) => {
-          if (err.codeName !== 'NamespaceNotFound') throw err
-        })
-      const collection = db.collection(name)
-      await collection.createIndexes(
-        INDEXES[name].map((i) => ({ key: i.key, ...i.options }))
-      )
-      if (docs.length) await collection.insertMany(docs, { ordered: false })
-      const count = await collection.countDocuments()
+    console.log(`Seeding ${databaseName}`)
+    const report = await seedDatabase(client.db(databaseName))
+    for (const [name, count] of Object.entries(report))
       console.log(`  ${name.padEnd(20)} ${count}`)
-    }
     console.log('Seed complete.')
   } finally {
     await client.close()
   }
 }
 
-main().catch((err) => {
-  console.error('Seed failed:', err.message)
-  process.exit(1)
-})
+// Run the CLI only when executed directly, not when imported by the plugin.
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  main().catch((err) => {
+    console.error('Seed failed:', err.message)
+    process.exit(1)
+  })
+}
