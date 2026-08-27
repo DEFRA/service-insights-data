@@ -23,7 +23,8 @@
     "start": "NODE_ENV=production node . --env-file-if-exists=.env",
     "test": "TZ=UTC vitest run --coverage",
     "test:watch": "TZ=UTC vitest",
-    "css:build": "sass --load-path=node_modules --style=compressed --no-source-map node_modules/@defra/frontend/src/defra-frontend.scss public/defra-frontend.css"
+    "css:build": "sass --load-path=node_modules --style=compressed --no-source-map node_modules/@defra/frontend/src/defra-frontend.scss public/defra-frontend.css",
+    "seed": "node src/seed/seed.js"
   },
   "imports": {
     "#/*": "./src/*"

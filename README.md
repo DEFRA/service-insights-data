@@ -19,11 +19,26 @@ Run it (Node 24):
 ```bash
 npm ci
 npm run css:build                     # compile @defra/frontend SCSS -> public/defra-frontend.css
-MONGO_URI=mongodb://127.0.0.1:27017/ MONGO_DATABASE=service_directory_mongo node .
+npm run seed                          # load the bundled directory snapshot into Mongo
+MONGO_URI=mongodb://127.0.0.1:27017/ MONGO_DATABASE=service-insights-data node .
 ```
 
 Frontend routes: `/` (services), `/service/{slug}`, `/web-register`,
 `/web-register/{id}`. Data API routes (`/health`, `/example`) are unchanged.
+
+### Seed data
+
+`npm run seed` loads a point-in-time snapshot of the six read-model collections
+(`src/seed/data/*.ndjson`, extended JSON) into the Mongo the service points at —
+so a deployed environment has data without needing the source database. It is
+idempotent (drops and reloads).
+
+**Personal data.** The `appUser` collection (staff identities) is never
+included — the UI does not use it. Email addresses have been redacted from the
+snapshot, and the Jira `comments` field stripped. Some free-text descriptions
+still name individuals in a work context; this is acceptable for an
+internal-only POC. If this repo's audience ever widens, do not bundle real data
+— ship the seed mechanism and load data into the environment's Mongo separately.
 
 - [Requirements](#requirements)
   - [Node.js](#nodejs)
