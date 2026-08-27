@@ -7,6 +7,7 @@ import { router } from '#/plugins/router.js'
 import { frontend } from '#/plugins/frontend.js'
 import { requestLogger } from '#/plugins/request-logger.js'
 import { mongoDb } from '#/plugins/mongodb.js'
+import { seedOnStartup } from '#/plugins/seed-on-startup.js'
 import { failAction } from '#/common/helpers/fail-action.js'
 import { pulse } from '#/plugins/pulse.js'
 import { requestTracing } from '#/plugins/request-tracing.js'
@@ -56,6 +57,7 @@ export async function createServer() {
       plugin: mongoDb,
       options: config.get('mongo')
     },
+    seedOnStartup,
     router,
     frontend
   ])
